@@ -1,0 +1,10 @@
+# 任务定义
+[jobs.check]
+command = ["cargo", "check", "--color", "always"]
+need_stdout = false
+
+[jobs.run]
+command = ["cargo", "run", "--color", "always"]
+need_stdout = true
+on_change_strategy = "kill_then_restart"
+kill = ["kill", "-s", "INT"]

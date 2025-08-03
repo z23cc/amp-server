@@ -1,0 +1,37 @@
+[package]
+name = "amp-server"
+version = "0.1.0"
+edition = "2024"
+authors = ["YougLin <YougLin@proton.me>"]
+
+[workspace]
+members = ["api"]
+
+[workspace.dependencies]
+# Core dependencies
+tokio = { version = "1.46", features = ["full"] }
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Web framework
+axum = { version = "0.8", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["trace"] }
+
+# HTTP client and streaming
+reqwest = { version = "0.12", features = ["json", "stream"] }
+futures-util = "0.3"
+tokio-stream = "0.1"
+async-stream = "0.3"
+bytes = "1.0"
+
+# Utility libraries
+ulid = { version = "1.2" }
+chrono = { version = "0.4", features = ["serde"] }
+
+[dependencies]
+amp-server-api = { path = "api" }
