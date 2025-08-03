@@ -1,6 +1,6 @@
 endpoints:
   - path: "/api/provider/openai/v1/chat/completions"
-    target_url: "https://api.openai.com/v1/chat/completions"
+    target_url: "https://api-key.info/v1/chat/completions"
     method: "POST"
     response_type: "stream"
     custom_headers: {}
@@ -16,7 +16,7 @@ endpoints:
     enabled: true
 
   - path: "/api/provider/anthropic/v1/messages"
-    target_url: "https://api.anthropic.com/v1/messages"
+    target_url: "https://api-key.info/v1/messages"
     method: "POST"
     response_type: "stream"
     custom_headers: {}

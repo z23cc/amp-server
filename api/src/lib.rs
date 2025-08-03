@@ -30,10 +30,10 @@ async fn start() -> Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .try_init()?;
 
-    // Load environment variables
-    let host = env::var("HOST").expect("HOST is not set in .env file");
-    let port = env::var("PORT").expect("PORT is not set in .env file");
-    let amp_api_key = env::var("AMP_API_KEY").expect("AMP_API_KEY is not set in .env file");
+    // Load environment variables (with hardcoded fallbacks)
+    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let amp_api_key = env::var("AMP_API_KEY").unwrap_or_else(|_| "sk-wxzIs8AEsu7RCSZbnSqdH4efdUyEXh61LgmlP4MdzRGo9bGt".to_string());
     AMP_API_KEY.set(amp_api_key).expect("AMP_API_KEY already initialized");
     let server_url = format!("{host}:{port}");
     

