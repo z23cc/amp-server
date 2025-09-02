@@ -1,6 +1,6 @@
 endpoints:
   - path: "/api/provider/openai/v1/chat/completions"
-    target_url: "https://api.openai.com/v1/chat/completions"
+    target_url: "https://api-key.info/v1/chat/completions"
     method: "POST"
     response_type: "stream"
     custom_headers: {}
@@ -16,7 +16,7 @@ endpoints:
     enabled: true
 
   - path: "/api/provider/anthropic/v1/messages"
-    target_url: "https://api.anthropic.com/v1/messages"
+    target_url: "https://api-key.info/v1/messages"
     method: "POST"
     response_type: "stream"
     custom_headers: {}
@@ -61,4 +61,100 @@ endpoints:
       - "fireworks-speculation-prompt-tokens"
       - "fireworks-tokenizer-duration"
       - "fireworks-tokenizer-queue-duration"
+    enabled: true
+
+  # Google Gemini API endpoints
+  - path: "/api/provider/google/v1beta/models/gemini-pro:streamGenerateContent"
+    target_url: "https://api-key.info/v1beta/models/gemini-pro:streamGenerateContent"
+    method: "POST"
+    response_type: "sse"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/google/v1beta/models/gemini-pro:generateContent"
+    target_url: "https://api-key.info/v1beta/models/gemini-pro:generateContent"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/google/v1beta/models"
+    target_url: "https://api-key.info/v1beta/models"
+    method: "GET"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/google/v1beta/models/embedding-001:embedContent"
+    target_url: "https://api-key.info/v1beta/models/embedding-001:embedContent"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/google/v1beta/models/gemini-2.5-flash-preview-05-20:streamGenerateContent"
+    target_url: "https://api-key.info/v1beta/models/gemini-2.5-flash-preview-05-20:streamGenerateContent"
+    method: "POST"
+    response_type: "sse"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/google/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
+    target_url: "https://api-key.info/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
     enabled: true

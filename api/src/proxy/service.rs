@@ -70,10 +70,13 @@ impl ProxyService {
         config: EndpointConfig,
         req: Request,
     ) -> Result<Response, (StatusCode, String)> {
-        info!("Forwarding request: {} -> {}", config.path, config.target_url);
-
         let client = Client::new();
         let (parts, body) = req.into_parts();
+        
+        info!("=== Incoming Request ===");
+        info!("Method: {}", parts.method);
+        info!("Path: {} -> {}", config.path, config.target_url);
+        info!("Headers: {:?}", parts.headers);
 
         // Read request body
         let body_bytes = match axum::body::to_bytes(body, usize::MAX).await {
@@ -83,6 +86,17 @@ impl ProxyService {
                 return Err((StatusCode::BAD_REQUEST, "Unable to read request body".to_string()));
             }
         };
+
+        // Print request body if it's JSON
+        if let Ok(body_str) = String::from_utf8(body_bytes.clone().to_vec()) {
+            if !body_str.is_empty() {
+                if let Ok(json_value) = serde_json::from_str::<Value>(&body_str) {
+                    info!("Request Body (JSON): {}", serde_json::to_string_pretty(&json_value).unwrap_or_else(|_| body_str));
+                } else {
+                    info!("Request Body (Text): {}", body_str);
+                }
+            }
+        }
 
         // Build request
         let method = Method::from_bytes(config.method.as_bytes())
@@ -118,6 +132,10 @@ impl ProxyService {
             }
         };
 
+        info!("=== Response from {} ===", config.target_url);
+        info!("Status: {}", response.status());
+        info!("Response Headers: {:?}", response.headers());
+
         if !response.status().is_success() {
             error!("Upstream server returned error status: {}", response.status());
             return Err((StatusCode::BAD_GATEWAY, "Upstream server error".to_string()));
@@ -136,6 +154,7 @@ impl ProxyService {
         response: reqwest::Response,
         config: &EndpointConfig,
     ) -> Result<Response, (StatusCode, String)> {
+        info!("Starting SSE stream processing for endpoint: {}", config.path);
         let mut response_headers = HeaderMap::new();
         
         // Forward response headers
@@ -266,6 +285,8 @@ impl ProxyService {
                 error!("Failed to parse JSON response: {}", e);
                 (StatusCode::INTERNAL_SERVER_ERROR, "Failed to parse response".to_string())
             })?;
+        
+        info!("Response Body (JSON): {}", serde_json::to_string_pretty(&json_data).unwrap_or_else(|_| "Invalid JSON".to_string()));
 
         let mut json_response = Json(json_data).into_response();
         *json_response.status_mut() = status;
@@ -295,6 +316,12 @@ impl ProxyService {
                 error!("Failed to read HTML response: {}", e);
                 (StatusCode::INTERNAL_SERVER_ERROR, "Failed to read response".to_string())
             })?;
+            
+        info!("Response Body (HTML): {}", if html_text.len() > 1000 { 
+            format!("{}... (truncated, length: {})", &html_text[..1000], html_text.len()) 
+        } else { 
+            html_text.clone() 
+        });
 
         let mut html_response = Response::builder()
             .status(status)

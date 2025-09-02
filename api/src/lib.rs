@@ -10,7 +10,8 @@ use tokio::signal;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing::{error, info};
-use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt, fmt::writer::MakeWriterExt};
+use tracing_appender::{rolling::{RollingFileAppender, Rotation}, non_blocking};
 
 use crate::proxy::{ProxyConfig, ProxyService};
 
@@ -22,18 +23,42 @@ pub fn get_amp_api_key() -> &'static str {
 
 #[tokio::main]
 async fn start() -> Result<()> {
-    // Initialize tracing
+    // Initialize tracing with file logging
+    let log_level = env::var("RUST_LOG").unwrap_or_else(|_| "info".into());
+    
+    // Create logs directory if it doesn't exist
+    std::fs::create_dir_all("logs").unwrap_or_else(|e| {
+        eprintln!("Warning: Could not create logs directory: {}", e);
+    });
+    
+    // Create file appender (daily rotation)
+    let file_appender = RollingFileAppender::builder()
+        .rotation(Rotation::DAILY)
+        .filename_prefix("amp-server")
+        .filename_suffix("log")
+        .build("logs")?;
+    let (non_blocking_file, _guard) = non_blocking(file_appender);
+    
+    // Initialize subscriber with both console and file output
     tracing_subscriber::registry()
-        .with(EnvFilter::new(
-            env::var("RUST_LOG").unwrap_or_else(|_| "info".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
+        .with(EnvFilter::new(log_level.clone()))
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_writer(std::io::stdout.and(non_blocking_file))
+                .with_ansi(false) // Disable ANSI colors for file output
+        )
         .try_init()?;
+        
+    info!("Logging initialized with level: {}", log_level);
+    info!("Logs will be written to: logs/amp-server.log");
+    
+    // Keep the guard alive for the duration of the program
+    let _log_guard = _guard;
 
-    // Load environment variables
-    let host = env::var("HOST").expect("HOST is not set in .env file");
-    let port = env::var("PORT").expect("PORT is not set in .env file");
-    let amp_api_key = env::var("AMP_API_KEY").expect("AMP_API_KEY is not set in .env file");
+    // Load environment variables (with hardcoded fallbacks)
+    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let amp_api_key = env::var("AMP_API_KEY").expect("AMP_API_KEY environment variable is required");
     AMP_API_KEY.set(amp_api_key).expect("AMP_API_KEY already initialized");
     let server_url = format!("{host}:{port}");
     
