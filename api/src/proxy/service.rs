@@ -280,19 +280,41 @@ impl ProxyService {
             }
         }
 
-        let json_data: Value = response.json().await
-            .map_err(|e| {
-                error!("Failed to parse JSON response: {}", e);
-                (StatusCode::INTERNAL_SERVER_ERROR, "Failed to parse response".to_string())
-            })?;
-        
-        info!("Response Body (JSON): {}", serde_json::to_string_pretty(&json_data).unwrap_or_else(|_| "Invalid JSON".to_string()));
+        // Read raw bytes so we can decide whether it's JSON or plain text (e.g., error bodies)
+        let body_bytes = response.bytes().await.map_err(|e| {
+            error!("Failed to read response body: {}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, "Failed to read response".to_string())
+        })?;
 
-        let mut json_response = Json(json_data).into_response();
-        *json_response.status_mut() = status;
-        json_response.headers_mut().extend(response_headers);
+        // Try to parse JSON first
+        match serde_json::from_slice::<Value>(&body_bytes) {
+            Ok(json_data) => {
+                info!(
+                    "Response Body (JSON): {}",
+                    serde_json::to_string_pretty(&json_data).unwrap_or_else(|_| "Invalid JSON".to_string())
+                );
+                let mut json_response = Json(json_data).into_response();
+                *json_response.status_mut() = status;
+                json_response.headers_mut().extend(response_headers);
+                Ok(json_response)
+            }
+            Err(err) => {
+                // Fallback to returning plain text with original status and forwarded headers
+                error!("Failed to parse JSON response, returning text: {}", err);
+                let mut builder = Response::builder().status(status);
+                // Default to text/plain; upstream content-type is already forwarded in response_headers if configured
+                builder = builder.header("content-type", "text/plain; charset=utf-8");
 
-        Ok(json_response)
+                let mut resp = builder
+                    .body(Body::from(body_bytes))
+                    .map_err(|e| {
+                        error!("Failed to build text response: {}", e);
+                        (StatusCode::INTERNAL_SERVER_ERROR, "Failed to build response".to_string())
+                    })?;
+                resp.headers_mut().extend(response_headers);
+                Ok(resp)
+            }
+        }
     }
 
     async fn handle_html_response(

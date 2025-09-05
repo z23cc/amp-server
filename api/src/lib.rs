@@ -23,6 +23,9 @@ pub fn get_amp_api_key() -> &'static str {
 
 #[tokio::main]
 async fn start() -> Result<()> {
+    // Load .env if present
+    let _ = dotenvy::dotenv();
+
     // Initialize tracing with file logging
     let log_level = env::var("RUST_LOG").unwrap_or_else(|_| "info".into());
     

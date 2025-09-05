@@ -6,7 +6,7 @@ endpoints:
     custom_headers: {}
     forward_request_headers:
       - "authorization"
-      - "content-type" 
+      - "content-type"
       - "user-agent"
       - "accept"
       - "accept-encoding"
@@ -23,7 +23,7 @@ endpoints:
     forward_request_headers:
       - "authorization"
       - "content-type"
-      - "user-agent" 
+      - "user-agent"
       - "accept"
       - "accept-encoding"
       - "anthropic-version"
@@ -147,6 +147,23 @@ endpoints:
     target_url: "https://api-key.info/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
     method: "POST"
     response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  # Cerebras (OpenAI-compatible) endpoint
+  - path: "/api/provider/cerebras/v1/chat/completions"
+    target_url: "https://api-key.info/v1/chat/completions"
+    method: "POST"
+    response_type: "stream"
     custom_headers: {}
     forward_request_headers:
       - "authorization"
