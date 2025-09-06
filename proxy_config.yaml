@@ -15,6 +15,93 @@ endpoints:
       - "cache-control"
     enabled: true
 
+  - path: "/api/provider/openai/v1/responses"
+    target_url: "https://api-key.info/v1/responses"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+      - "openai-beta"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  # Google Responses compatibility endpoint (converted to Gemini generateContent)
+  - path: "/api/provider/google/v1/responses"
+    # Base; final target becomes: {target_url}/{model}:(stream)generateContent
+    target_url: "https://api-key.info/v1beta/models"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  # Google Responses compatibility endpoint (v1beta variant)
+  - path: "/api/provider/google/v1beta/responses"
+    target_url: "https://api-key.info/v1beta/models"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+
+  - path: "/api/provider/openai/v1/models"
+    target_url: "https://api-key.info/v1/models"
+    method: "GET"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+      - "openai-beta"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/openai/v1/embeddings"
+    target_url: "https://api-key.info/v1/embeddings"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+      - "openai-beta"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+
   - path: "/api/provider/anthropic/v1/messages"
     target_url: "https://api-key.info/v1/messages"
     method: "POST"
@@ -159,9 +246,123 @@ endpoints:
       - "cache-control"
     enabled: true
 
-  # Cerebras (OpenAI-compatible) endpoint
+  # Cerebras (OpenAI-compatible) endpoints
   - path: "/api/provider/cerebras/v1/chat/completions"
     target_url: "https://api-key.info/v1/chat/completions"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/cerebras/v1/models"
+    target_url: "https://api-key.info/v1/models"
+    method: "GET"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/cerebras/v1/embeddings"
+    target_url: "https://api-key.info/v1/embeddings"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/cerebras/v1/completions"
+    target_url: "https://api-key.info/v1/completions"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  # xAI (Grok) API endpoints - OpenAI-compatible
+  - path: "/api/provider/xai/v1/chat/completions"
+    target_url: "https://api-key.info/v1/chat/completions"
+    method: "POST"
+    response_type: "stream"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+      - "x-ratelimit-limit-requests"
+      - "x-ratelimit-remaining-requests"
+      - "x-ratelimit-reset-requests"
+    enabled: true
+
+  - path: "/api/provider/xai/v1/models"
+    target_url: "https://api-key.info/v1/models"
+    method: "GET"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/xai/v1/embeddings"
+    target_url: "https://api-key.info/v1/embeddings"
+    method: "POST"
+    response_type: "json"
+    custom_headers: {}
+    forward_request_headers:
+      - "authorization"
+      - "content-type"
+      - "user-agent"
+      - "accept"
+      - "accept-encoding"
+    forward_response_headers:
+      - "content-type"
+      - "cache-control"
+    enabled: true
+
+  - path: "/api/provider/xai/v1/completions"
+    target_url: "https://api-key.info/v1/completions"
     method: "POST"
     response_type: "stream"
     custom_headers: {}

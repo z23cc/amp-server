@@ -30,4 +30,5 @@ bytes = { workspace = true }
 ulid = { workspace = true }
 chrono = { workspace = true }
 dotenvy = "0.15.7"
+url = "2.5"
 

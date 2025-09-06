@@ -1,9 +1,11 @@
 mod user;
 mod telemetry;
 mod proxy;
+mod health;
+mod error;
 
 use anyhow::Result;
-use axum::Router;
+use axum::{Router, middleware};
 use std::env;
 use std::sync::OnceLock;
 use tokio::signal;
@@ -77,6 +79,7 @@ async fn start() -> Result<()> {
     
     // Initialize router
     let app = Router::new()
+        .merge(health::router())
         .merge(user::router())
         .merge(telemetry::router())
         .merge(proxy_service.create_router())
